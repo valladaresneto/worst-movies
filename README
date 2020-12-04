@@ -1,0 +1,25 @@
+The main purpose of this project is to provide an API for movies.
+
+On the load of if, it reads a CSV with a movie list and save in a memory database (H2).
+
+The api provide endpoints to:
+
+1 - List all movies
+2 - Insert a new movie
+3 - Deleta a movie
+4 - Get which Producers have receive awards with a bigger period between them
+5 - Get which Producers have receive awards with a shoter period between them
+
+### Getting started with the project
+
+mvn clean install -DskipTests
+mvn spring-boot:run
+
+### Examples to consume the API
+
+File: movies.http
+
+### Running tests
+
+mvn clean install -DskipTests
+mvn test
