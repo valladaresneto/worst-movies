@@ -6,9 +6,8 @@ The api provide endpoints to:
 
 1 - List all movies
 2 - Insert a new movie
-3 - Deleta a movie
-4 - Get which Producers have receive awards with a bigger period between them
-5 - Get which Producers have receive awards with a shoter period between them
+3 - Delete a movie
+4 - Get which Producers have receive awards with a bigger and shorter period between them
 
 ### Getting started with the project
 

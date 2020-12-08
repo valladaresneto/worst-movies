@@ -9,8 +9,11 @@ import com.walter.worstmovies.repository.ProducerRepository;
 import com.walter.worstmovies.repository.StudioRepository;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,7 @@ public class MovieService {
         return movieRepository.findById(id);
     }
 
-    public Movie save(Movie movie) throws ValidationException {
+    public Map<String, Object> save(Movie movie) throws ValidationException {
         if(movie.getTitle() == null) {
             throw new ValidationException("Title is required");
         }
@@ -56,7 +59,19 @@ public class MovieService {
             }
             movie.setProducers(producersPersisted);
         }
-        return movieRepository.save(movie);
+        Movie savedMovie = movieRepository.save(movie);
+        return transformMovieToMap(savedMovie);
+    }
+
+    public Map<String, Object> transformMovieToMap(Movie movie) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("id", movie.getId());
+        result.put("year", movie.getYear());
+        result.put("title", movie.getTitle());
+        result.put("studios", movie.getStudios().stream().map(Studio::getName).collect(Collectors.toSet()));
+        result.put("producers", movie.getProducers().stream().map(Producer::getName).collect(Collectors.toSet()));
+        result.put("winner", movie.getWinner());
+        return result;
     }
 
     public void delete(Movie movie) throws ValidationException {

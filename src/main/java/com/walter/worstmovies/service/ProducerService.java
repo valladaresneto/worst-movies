@@ -6,6 +6,7 @@ import com.walter.worstmovies.repository.MovieRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,15 +22,14 @@ public class ProducerService {
     @Autowired
     private MovieRepository movieRepository;
 
-    public List<Producer> biggerPeriodBetweenAwards() {
-        return getProducersWithPeriodBetweenAwards(true);
+    public Map<String, List<Map<String, String>>> periodBetweenAwards() {
+        Map<String, List<Map<String, String>>> result = new HashMap<>();
+        result.put("min", getProducersWithPeriodBetweenAwards(false));
+        result.put("max", getProducersWithPeriodBetweenAwards(true));
+        return result;
     }
 
-    public List<Producer> shorterPeriodBetweenAwards() {
-        return getProducersWithPeriodBetweenAwards(false);
-    }
-
-    private List<Producer> getProducersWithPeriodBetweenAwards(boolean bigger) {
+    private List<Map<String, String>> getProducersWithPeriodBetweenAwards(boolean bigger) {
         List<Movie> moviesWithAward = movieRepository.findAllWithAward();
         Map<Producer, List<Movie>> moviesWithAwardByProducer = new HashMap<>();
         moviesWithAward.forEach(movie -> {
@@ -38,25 +38,34 @@ public class ProducerService {
                 movieList.add(movie);
             });
         });
-        List<Producer> producers = new ArrayList<>();
         int count = bigger ? 0 : 9999;
 
-        Set<Entry<Producer, List<Movie>>> filteredEntries = moviesWithAwardByProducer.entrySet().stream()
+        Set<Entry<Producer, List<Movie>>> producersWithMoreThanOneAward = moviesWithAwardByProducer.entrySet().stream()
                 .filter(producerListEntry -> producerListEntry.getValue().size() > 1).collect(Collectors.toSet());
 
-        for(Entry<Producer, List<Movie>> entry: filteredEntries) {
+        List<Map<String, String>> result = new ArrayList<>();
+        for(Entry<Producer, List<Movie>> entry: producersWithMoreThanOneAward) {
             Integer first = entry.getValue().stream().map(Movie::getYear).reduce(9999, Integer::min);
             Integer last = entry.getValue().stream().map(Movie::getYear).reduce(0, Integer::max);
             if(last - first == count) {
-                producers.add(entry.getKey());
+                result.add(populateMapWithProducerInfo(entry, first, last));
                 continue;
             }
             if(bigger ? last - first > count : last - first < count) {
-                producers.clear();
-                producers.add(entry.getKey());
+                result.clear();
+                result.add(populateMapWithProducerInfo(entry, first, last));
                 count = last - first;
             }
         }
-        return producers;
+        return result;
+    }
+
+    private Map<String, String> populateMapWithProducerInfo(Entry<Producer, List<Movie>> entry, Integer first, Integer last) {
+        Map<String, String> resultItem = new LinkedHashMap<>();
+        resultItem.put("producer", entry.getKey().getName());
+        resultItem.put("interval", String.valueOf(last - first));
+        resultItem.put("previousWin", String.valueOf(first));
+        resultItem.put("followingWin", String.valueOf(last));
+        return resultItem;
     }
 }

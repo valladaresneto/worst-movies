@@ -19,23 +19,13 @@ public class ProducerEndpoint {
     @Autowired
     private ProducerService producerService;
 
-    @GetMapping("/bigger-period-between-awards")
-    public ResponseEntity biggerPeriodBetweenAwards() {
+    @GetMapping("/period-between-awards")
+    public ResponseEntity periodBetweenAwards() {
         try {
-            return ResponseEntity.ok(producerService.biggerPeriodBetweenAwards());
+            return ResponseEntity.ok(producerService.periodBetweenAwards());
         } catch (Exception e) {
             LOGGER.error("Error", e);
-            return ResponseEntity.status(500).body("Error on find producer with bigger period between awards.");
-        }
-    }
-
-    @GetMapping("/shorter-period-between-awards")
-    public ResponseEntity shorterPeriodBetweenAwards() {
-        try {
-            return ResponseEntity.ok(producerService.shorterPeriodBetweenAwards());
-        } catch (Exception e) {
-            LOGGER.error("Error", e);
-            return ResponseEntity.status(500).body("Error on find producer with shorter period between awards.");
+            return ResponseEntity.status(500).body("Error on find producer with bigger and shorter period between awards.");
         }
     }
 

@@ -5,6 +5,7 @@ import com.walter.worstmovies.entity.Movie;
 import com.walter.worstmovies.exception.ValidationException;
 import com.walter.worstmovies.service.MovieService;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class MoviesEndpoint {
                 return ResponseEntity.notFound().build();
             }
             Movie movie = optMovie.get();
-            ResponseEntity<String> response = ResponseEntity.ok(GSON.toJson(movie));
+            ResponseEntity<Map<String, Object>> response = ResponseEntity.ok(movieService.transformMovieToMap(movie));
             movieService.delete(movie);
             return response;
         } catch (ValidationException e) {

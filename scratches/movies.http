@@ -4,13 +4,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/producers/bigger-period-between-awards
-Accept: application/json
-Content-Type: application/json
-
-###
-
-GET http://localhost:8080/producers/shorter-period-between-awards
+GET http://localhost:8080/producers/period-between-awards
 Accept: application/json
 Content-Type: application/json
 
